@@ -1,2 +1,2 @@
-# kubernetes-node-autoscaler
-Kubernetes Node autoscaler 
+# kubernetes-node-scaler
+Kubernetes Node scaler 
