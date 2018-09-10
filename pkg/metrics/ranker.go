@@ -18,23 +18,40 @@ type RankResult struct {
 // the RealValue field.
 type ByValue []RankResult
 
-func (a ByValue) Len() int           { return len(a) }
-func (a ByValue) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByValue) Less(i, j int) bool { return (a[i].RealValue).(int) < a[j].RealValue.(int) }
+func (a ByValue) Len() int      { return len(a) }
+func (a ByValue) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a ByValue) Less(i, j int) bool {
+	switch a[i].RealValue.(type) {
+	case int:
+		// v is an int here, so e.g. v + 1 is possible.
+		return (a[i].RealValue).(int) < a[j].RealValue.(int)
+	case int64:
+		return (a[i].RealValue).(int64) < a[j].RealValue.(int64)
+	}
 
-func RankByValue(keys []string, da DataAggregator) (results []RankResult, err error) {
-	results = make([]RankResult, len(keys))
+	return false
+}
+
+func RankByValue(keys []string, da DataAggregator) (results map[string]*RankResult, err error) {
+	results = make(map[string]*RankResult)
+	r := make([]RankResult, len(keys))
 	for i, k := range keys {
 		val, err := da.Get(k)
 		if err != nil {
 			return nil, err
 		}
-		results[i] = RankResult{Key: k, RealValue: val, Rank: -1}
+		r[i] = RankResult{Key: k, RealValue: val, Rank: -1}
 	}
-	sort.Sort(ByValue(results))
-	for i, r := range results {
-		r.Rank = i + 1
+	sort.Sort(ByValue(r))
+	last := r[0].RealValue
+	curr := 1
+	for i := 0; i < len(r); i++ {
+		if r[i].RealValue != last {
+			last = r[i]
+			curr++
+		}
+		r[i].Rank = curr
+		results[r[i].Key] = &r[i]
 	}
-
-	return nil, nil
+	return results, nil
 }

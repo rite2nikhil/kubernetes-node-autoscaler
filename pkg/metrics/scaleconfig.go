@@ -6,11 +6,13 @@ import (
 	"os"
 )
 
+type Metric struct {
+	Name   string `json:"name"`
+	Weight int    `json:"weight"`
+}
+
 type ScaleConfig struct {
-	Metrics []struct {
-		Name   string `json:"name"`
-		Weight string `json:"weight"`
-	} `json:"metrics"`
+	Metrics       []Metric `json:"metrics"`
 	ExcludedNodes []string `json:"excludednodes"`
 }
 

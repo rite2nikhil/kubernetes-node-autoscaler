@@ -13,7 +13,12 @@ func main() {
 	}
 	fmt.Printf("starting")
 	up := metrics.ScaleConfig{}
-	down := metrics.ScaleConfig{}
+	m := []metrics.Metric{
+		{Name: "cpu", Weight: 1},
+	}
+	down := metrics.ScaleConfig{m, []string{}}
+
 	scaler := metrics.NewNodeScaler(k8s, up, down)
-	scaler.Down(1, nil)
+	x, e := scaler.Down(10, nil)
+	fmt.Printf("result: %v %v", x, e)
 }
