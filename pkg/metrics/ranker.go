@@ -20,20 +20,20 @@ type ByValue []RankResult
 
 func (a ByValue) Len() int           { return len(a) }
 func (a ByValue) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByValue) Less(i, j int) bool { return a[i].RealValue < a[j].RealValue }
+func (a ByValue) Less(i, j int) bool { return (a[i].RealValue).(int) < a[j].RealValue.(int) }
 
 func RankByValue(keys []string, da DataAggregator) (results []RankResult, err error) {
-	result = make([]RankResult, len(keys))
-	for _, k := range keys {
-		err = rm.getValue(k)
+	results = make([]RankResult, len(keys))
+	for i, k := range keys {
+		val, err := da.Get(k)
 		if err != nil {
 			return nil, err
 		}
-		results[k] = RankResult{Key: k, RealValue: da.Get(n), Rank: -1}
+		results[i] = RankResult{Key: k, RealValue: val, Rank: -1}
 	}
 	sort.Sort(ByValue(results))
 	for i, r := range results {
-		r[i].Rank = i + 1
+		r.Rank = i + 1
 	}
 
 	return nil, nil

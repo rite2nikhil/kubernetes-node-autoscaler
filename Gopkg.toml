@@ -25,6 +25,26 @@
 #   unused-packages = true
 
 
+[[constraint]]
+  name = "github.com/onsi/ginkgo"
+  version = "1.6.0"
+
+[[constraint]]
+  name = "github.com/onsi/gomega"
+  version = "1.4.1"
+
+[[override]]
+  name = "k8s.io/apimachinery"
+  branch = "release-1.10" # correct branch
+
+[[override]]
+  name = "k8s.io/client-go"
+  branch = "release-7.0" # correct branch
+
+[[override]]
+  name = "k8s.io/api"
+  branch = "release-1.10" # correct branch
+
 [prune]
   go-tests = true
   unused-packages = true

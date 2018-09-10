@@ -4,10 +4,15 @@ import (
 	"os"
 
 	"k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
+
+type KubeNodeClient interface {
+	ListNodes() (objs *v1.NodeList, err error)
+}
 
 // KubeClient k8s client
 type KubeClient struct {
@@ -16,7 +21,7 @@ type KubeClient struct {
 }
 
 // NewKubeClient new kubernetes api client
-func NewKubeClient() (KubeClient, error) {
+func NewKubeClient() (*KubeClient, error) {
 	clientset, err := getkubeclient()
 	if err != nil {
 		return nil, err
@@ -24,7 +29,7 @@ func NewKubeClient() (KubeClient, error) {
 	return &KubeClient{ClientSet: clientset}, nil
 }
 
-func (k8s *KubeClient) ListNodes() (objs []*v1.Node, err error) {
+func (k8s *KubeClient) ListNodes() (objs *v1.NodeList, err error) {
 	return k8s.ClientSet.CoreV1().Nodes().List(metav1.ListOptions{})
 }
 

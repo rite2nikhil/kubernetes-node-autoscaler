@@ -14,7 +14,7 @@ type ScaleConfig struct {
 	ExcludedNodes []string `json:"excludednodes"`
 }
 
-func LoadConfiguration(file string) Config {
+func LoadConfiguration(file string) ScaleConfig {
 	var config ScaleConfig
 	configFile, err := os.Open(file)
 	defer configFile.Close()

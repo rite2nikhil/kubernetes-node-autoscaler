@@ -1,7 +1,13 @@
 package metrics
 
+import (
+	"fmt"
+
+	"k8s.io/api/core/v1"
+)
+
 type DataAggregator interface {
-	Get(key string) interface{}, error
+	Get(key string) (interface{}, error)
 }
 
 type NodeCPU struct {
@@ -9,17 +15,17 @@ type NodeCPU struct {
 }
 
 // GetCurrentCPU get node current cpu for from apiserver
-func (c *NodeCPU) Get(key string) int64, error {
-	n, err := nodestore.GetNode(node)
+func (c *NodeCPU) Get(key string) (interface{}, error) {
+	n, err := c.nodestore.Get(key)
 	if err != nil {
 		return -1, err
 	}
-	if n.Status == nil || n.Status.Allocatable == nil {
-		return -1, fmt.Errorf("node is nil, node: %", node)
+	if n.Status.Allocatable == nil {
+		return -1, fmt.Errorf("node is nil, node: %", key)
 	}
-	cpu, ok = n.Status.Allocatable[v1.ResourceCPU]
+	cpu, ok := n.Status.Allocatable[v1.ResourceCPU]
 	if !ok {
-		return -1, fmt.Errorf("cpu resource not found, node %s", node)
+		return -1, fmt.Errorf("cpu resource not found, node %s", key)
 	}
 	return cpu.Value(), nil
 }
